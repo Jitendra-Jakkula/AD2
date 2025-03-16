@@ -1,0 +1,57 @@
+/* Print styles */
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the resume content */
+  #resume-to-print, #resume-to-print * {
+    visibility: visible;
+  }
+  
+  /* Position the resume at the top of the page */
+  #resume-to-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    margin: 0;
+    box-shadow: none !important;
+  }
+  
+  /* Hide navigation and buttons */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Ensure text is visible */
+  #resume-to-print * {
+    color: black !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* Avoid page breaks inside elements */
+  h1, h2, h3, h4, h5, h6, p, li {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure proper page margins */
+  @page {
+    margin: 0.5cm;
+  }
+  
+  /* Remove background colors and shadows */
+  #resume-to-print, #resume-to-print * {
+    background-color: white !important;
+    box-shadow: none !important;
+  }
+  
+  /* Ensure proper spacing between sections */
+  #resume-to-print > div {
+    margin-bottom: 15px;
+  }
+} 
