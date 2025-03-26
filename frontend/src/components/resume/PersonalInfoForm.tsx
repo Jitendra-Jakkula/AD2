@@ -46,6 +46,10 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ personalInfo, onUpd
     enableReinitialize: true,
   });
 
+  // For tracking field-specific errors outside of Formik
+  const [phoneError, setPhoneError] = React.useState("");
+  const [zipCodeError, setZipCodeError] = React.useState("");
+
   // Update parent component whenever form values change
   React.useEffect(() => {
     if (formik.dirty) {
@@ -83,7 +87,14 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ personalInfo, onUpd
             label="Email"
             value={formik.values.email}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+
+              const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailPattern.test(formik.values.email)) {
+                formik.setErrors({ ...formik.errors, email: "Invalid email format" });
+              }
+            }}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
             required
@@ -97,10 +108,25 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ personalInfo, onUpd
             name="phone"
             label="Phone"
             value={formik.values.phone}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.phone && Boolean(formik.errors.phone)}
-            helperText={formik.touched.phone && formik.errors.phone}
+            onChange={(e) => {
+              formik.handleChange(e);
+              setPhoneError("");
+            }}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              
+              // Phone validation: starts with 6, 7, 8, or 9 and is exactly 10 digits
+              if (formik.values.phone) {
+                const phonePattern = /^[6-9]\d{9}$/;
+                if (!phonePattern.test(formik.values.phone)) {
+                  setPhoneError("Phone must start with 6, 7, 8, or 9 and be exactly 10 digits");
+                } else {
+                  setPhoneError("");
+                }
+              }
+            }}
+            error={Boolean(phoneError)}
+            helperText={phoneError}
           />
         </Grid>
         
@@ -153,10 +179,25 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ personalInfo, onUpd
             name="zipCode"
             label="Zip/Postal Code"
             value={formik.values.zipCode}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.zipCode && Boolean(formik.errors.zipCode)}
-            helperText={formik.touched.zipCode && formik.errors.zipCode}
+            onChange={(e) => {
+              formik.handleChange(e);
+              setZipCodeError("");
+            }}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              
+              // Pincode validation: exactly 6 digits
+              if (formik.values.zipCode) {
+                const pincodePattern = /^\d{6}$/;
+                if (!pincodePattern.test(formik.values.zipCode)) {
+                  setZipCodeError("Pincode must be exactly 6 digits");
+                } else {
+                  setZipCodeError("");
+                }
+              }
+            }}
+            error={Boolean(zipCodeError)}
+            helperText={zipCodeError}
           />
         </Grid>
         
@@ -242,4 +283,4 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ personalInfo, onUpd
   );
 };
 
-export default PersonalInfoForm; 
+export default PersonalInfoForm;
